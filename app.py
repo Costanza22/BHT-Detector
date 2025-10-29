@@ -19,11 +19,19 @@ except (ImportError, ValueError, Exception):
     PYTESSERACT_AVAILABLE = False
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
+
+if os.path.exists('uploads'):
+    app.config['UPLOAD_FOLDER'] = 'uploads'
+else:
+    app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'bht-detector-dev-key-change-in-production')
 
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+try:
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+except:
+    pass
 BHT_PATTERNS = [
     r'\bBHT\b',
     r'\bbht\b',
