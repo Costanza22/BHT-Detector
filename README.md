@@ -1,4 +1,4 @@
-# BHT Detector 🤖
+# BHT Detector 
 
 ## 💡 Sobre o Projeto
 
@@ -124,23 +124,6 @@ BHT/
 │       └── leite ninho.jpg # Imagem do produto (exemplo)
 └── uploads/               # Pasta para uploads temporários (criada automaticamente)
 ```
-
-## 🤝 Contribuindo
-
-Este projeto foi criado para ajudar pessoas com alergia a BHT. Se você também tem essa alergia ou conhece alguém que tenha, sinta-se à vontade para:
-- Sugerir melhorias
-- Reportar bugs
-- Compartilhar com outras pessoas que possam se beneficiar
-
-## 💚 Um Pouco da Minha História
-
-Como pessoa com alergia a BHT, sei como é frustrante ter que ler rótulo por rótulo em busca desse conservante. Muitas vezes, ele aparece com nomes diferentes (E320, INS 320) ou em lugares onde você menos espera.
-
-Criei esta IA como uma solução prática e acessível para:
-- ✅ Evitar produtos com BHT
-- ✅ Ganhar tempo no supermercado
-- ✅ Ter mais confiança na escolha de produtos
-- ✅ Ajudar outras pessoas na mesma situação
 
 
 
