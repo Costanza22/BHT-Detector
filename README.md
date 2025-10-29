@@ -120,9 +120,8 @@ BHT/
 │   │   └── style.css      # Estilos CSS
 │   ├── js/
 │   │   └── main.js        # JavaScript frontend
-│   └── images/
-│       └── leite ninho.jpg # Imagem do produto (exemplo)
-└── uploads/               # Pasta para uploads temporários (criada automaticamente)
+│   
+└── uploads/               
 ```
 
 
