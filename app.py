@@ -101,6 +101,7 @@ def preprocess_image(image_path):
 
 def extract_text_from_image(image_path):
     processed_path = preprocess_image(image_path)
+    extracted_text = ""
     
     if EASYOCR_AVAILABLE:
         try:
@@ -137,7 +138,7 @@ def extract_text_from_image(image_path):
         except:
             pass
     
-    return ""
+    return "⚠️ OCR não disponível neste ambiente. Por favor, cole o texto dos ingredientes manualmente na aba 'Análise de Texto'."
 
 @app.route('/')
 def index():
@@ -155,6 +156,19 @@ def detect():
                 file.save(filepath)
                 
                 extracted_text = extract_text_from_image(filepath)
+                
+                if "⚠️ OCR não disponível" in extracted_text:
+                    try:
+                        os.remove(filepath)
+                    except OSError:
+                        pass
+                    return jsonify({
+                        'success': False,
+                        'has_bht': False,
+                        'error': extracted_text,
+                        'method': 'image'
+                    }), 400
+                
                 has_bht, matches = detect_bht_in_text(extracted_text)
                 
                 try:
