@@ -27,6 +27,22 @@ export default function Root({ children }: PropsWithChildren) {
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
         <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
         
+        <style>{`
+          * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+          body {
+            font-size: 16px;
+            line-height: 1.5;
+          }
+          @media (max-width: 768px) {
+            body {
+              font-size: 16px;
+            }
+          }
+        `}</style>
+        
         <ScrollViewStyleReset />
         {children}
       </head>
