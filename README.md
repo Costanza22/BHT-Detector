@@ -1,6 +1,11 @@
-# Detector de BHT Mobile
+# BHT Detector - Aplicativo Mobile
 
-Aplicativo mobile para detectar BHT (Butylated Hydroxytoluene) em rótulos de alimentos através de análise de imagem.
+**Criado por Costanza Pasquotto Assef**
+
+Aplicativo mobile desenvolvido por **Costanza Pasquotto Assef** para detectar BHT (Butylated Hydroxytoluene) em rótulos de alimentos através de análise de imagem usando inteligência artificial e OCR.
+
+**Desenvolvedor:** Costanza Pasquotto Assef  
+**Tecnologias:** React Native, Expo, TypeScript, OCR, Machine Learning
 
 ## ⚠️ Copyright
 
@@ -115,6 +120,23 @@ O app detecta BHT através de vários padrões:
 - O app funciona melhor com rótulos bem iluminados e em foco
 - A precisão depende da qualidade do OCR
 - Alguns rótulos podem ter texto em áreas difíceis de ler
+
+## 👨‍💻 Sobre o Desenvolvedor
+
+**Costanza Pasquotto Assef** é o criador e desenvolvedor deste aplicativo. 
+
+Este projeto demonstra habilidades em:
+- Desenvolvimento Mobile (React Native, Expo)
+- TypeScript
+- Integração com APIs (OCR, Vision)
+- UI/UX Design
+- Processamento de Imagem
+- Machine Learning aplicado
+
+## 🔗 Links
+
+- **GitHub:** [Costanza22/BHT-Detector](https://github.com/Costanza22/BHT-Detector)
+- **Desenvolvedor:** Costanza Pasquotto Assef
 
 
 ## 📄 Licença

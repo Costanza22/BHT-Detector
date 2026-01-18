@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bht-detector.vercel.app/sitemap.xml
+
