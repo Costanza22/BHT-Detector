@@ -50,6 +50,7 @@
   },
   "private": true,
   "license": "UNLICENSED",
-  "author": "Costanza22",
-  "copyright": "Copyright (c) 2025 Costanza22. All Rights Reserved."
+  "author": "Costanza Pasquotto Assef",
+  "copyright": "Copyright (c) 2025 Costanza Pasquotto Assef. All Rights Reserved.",
+  "description": "Aplicativo mobile para detectar BHT (Butylated Hydroxytoluene) em rótulos de alimentos. Criado por Costanza Pasquotto Assef."
 }

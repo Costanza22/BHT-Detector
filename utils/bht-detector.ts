@@ -1,6 +1,8 @@
 /**
- * Copyright (c) 2025 Costanza22
+ * Copyright (c) 2025 Costanza Pasquotto Assef
  * All Rights Reserved
+ * 
+ * Criado por: Costanza Pasquotto Assef
  * 
  * Este arquivo contém algoritmos proprietários para detecção de BHT.
  * É proibida a cópia, modificação ou distribuição sem autorização.

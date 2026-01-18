@@ -1,6 +1,8 @@
 /**
- * Copyright (c) 2025 Costanza22
+ * Copyright (c) 2025 Costanza Pasquotto Assef
  * All Rights Reserved
+ * 
+ * Criado por: Costanza Pasquotto Assef
  */
 
 import { useState, useRef } from 'react';

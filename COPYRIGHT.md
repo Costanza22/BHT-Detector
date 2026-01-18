@@ -2,7 +2,9 @@
 
 ## Propriedade Intelectual
 
-**Copyright © 2025 Costanza22**
+**Copyright © 2025 Costanza Pasquotto Assef**
+
+**Criado por:** Costanza Pasquotto Assef
 
 Este software, incluindo mas não limitado a:
 - Código-fonte

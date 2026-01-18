@@ -4,7 +4,11 @@ Aplicativo mobile para detectar BHT (Butylated Hydroxytoluene) em rótulos de al
 
 ## ⚠️ Copyright
 
-Copyright © 2025 Costanza22. Todos os direitos reservados.
+**Copyright © 2025 Costanza Pasquotto Assef**
+
+**Criado por:** Costanza Pasquotto Assef
+
+Todos os direitos reservados.
 
 Este software é propriedade privada e confidencial. É proibida a cópia, modificação, distribuição ou uso comercial sem autorização expressa por escrito.
 
@@ -117,6 +121,10 @@ O app detecta BHT através de vários padrões:
 
 Este projeto é privado e protegido por direitos autorais.
 
-**Copyright © 2025 Costanza22. Todos os direitos reservados.**
+**Copyright © 2025 Costanza Pasquotto Assef**
+
+**Criado por:** Costanza Pasquotto Assef
+
+Todos os direitos reservados.
 
 Para informações sobre licenciamento, entre em contato com o proprietário.

@@ -1,17 +1,31 @@
 {
   "expo": {
-    "name": "bht-detector-mobile",
+    "name": "BHT Detector",
     "slug": "bht-detector-mobile",
     "version": "1.0.0",
+    "description": "Aplicativo mobile para detectar BHT em rótulos de alimentos. Criado por Costanza Pasquotto Assef.",
+    "author": "Costanza Pasquotto Assef",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "bhtdetectormobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "dark": {
+        "backgroundColor": "#000000"
+      }
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.costanza.bhtdetector",
+      "buildNumber": "1.0.0"
     },
     "android": {
+      "package": "com.costanza.bhtdetector",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
