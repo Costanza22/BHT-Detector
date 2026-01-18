@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2025 Costanza22
+ * All Rights Reserved
+ * 
+ * Este arquivo contém algoritmos proprietários para detecção de BHT.
+ * É proibida a cópia, modificação ou distribuição sem autorização.
+ */
+
 export interface BHTDetectionResult {
   containsBHT: boolean;
   confidence: 'high' | 'medium' | 'low';

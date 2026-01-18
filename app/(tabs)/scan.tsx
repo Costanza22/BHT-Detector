@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2025 Costanza22
+ * All Rights Reserved
+ */
+
 import { useState, useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, Alert, ActivityIndicator, Modal, TextInput, Platform } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';

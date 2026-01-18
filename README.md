@@ -2,6 +2,12 @@
 
 Aplicativo mobile para detectar BHT (Butylated Hydroxytoluene) em rótulos de alimentos através de análise de imagem.
 
+## ⚠️ Copyright
+
+Copyright © 2025 Costanza22. Todos os direitos reservados.
+
+Este software é propriedade privada e confidencial. É proibida a cópia, modificação, distribuição ou uso comercial sem autorização expressa por escrito.
+
 ## 🚀 Funcionalidades
 
 - 📷 **Captura de imagem**: Use a câmera ou galeria para fotografar rótulos de alimentos
@@ -109,4 +115,8 @@ O app detecta BHT através de vários padrões:
 
 ## 📄 Licença
 
-Este projeto é privado.
+Este projeto é privado e protegido por direitos autorais.
+
+**Copyright © 2025 Costanza22. Todos os direitos reservados.**
+
+Para informações sobre licenciamento, entre em contato com o proprietário.

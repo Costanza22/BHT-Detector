@@ -48,5 +48,8 @@
     "eslint-config-expo": "~10.0.0",
     "typescript": "~5.9.2"
   },
-  "private": true
+  "private": true,
+  "license": "UNLICENSED",
+  "author": "Costanza22",
+  "copyright": "Copyright (c) 2025 Costanza22. All Rights Reserved."
 }
