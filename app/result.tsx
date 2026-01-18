@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
   },
   matchText: {
     fontSize: 13,
-    fontFamily: 'monospace',
   },
   imageContainer: {
     marginBottom: 20,
@@ -235,7 +234,6 @@ const styles = StyleSheet.create({
   },
   detectedText: {
     fontSize: 11,
-    fontFamily: 'monospace',
     lineHeight: 16,
   },
   actions: {

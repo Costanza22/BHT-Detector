@@ -328,6 +328,13 @@ export default function ScanScreen() {
       <CameraView ref={cameraRef} style={styles.camera} facing={facing} mode="picture">
         <View style={styles.overlay}>
           <View style={styles.header}>
+            <View style={styles.headerIconContainer}>
+              <IconSymbol
+                name="camera.fill"
+                size={48}
+                color="#fff"
+              />
+            </View>
             <ThemedText type="title" style={styles.title}>
               Escaneie o Rótulo
             </ThemedText>
@@ -451,6 +458,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: 'center',
   },
+  headerIconContainer: {
+    marginBottom: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 30,
+    padding: 12,
+  },
   title: {
     color: '#fff',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
@@ -469,12 +482,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 40,
+    padding: 16,
   },
   scanFrame: {
     width: '100%',
-    height: '60%',
-    borderWidth: 2,
+    height: '85%',
+    borderWidth: 4,
     borderColor: '#fff',
     borderRadius: 12,
     borderStyle: 'dashed',

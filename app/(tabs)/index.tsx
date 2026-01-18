@@ -1,6 +1,6 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
 import { Image } from 'expo-image';
+import { router } from 'expo-router';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';

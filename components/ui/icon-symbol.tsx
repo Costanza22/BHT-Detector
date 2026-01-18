@@ -1,5 +1,5 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
+import { SymbolViewProps, SymbolWeight } from 'expo-symbols';
 import { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
@@ -11,6 +11,14 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'camera.fill': 'camera-alt',
+  'info.circle.fill': 'info',
+  'photo.fill': 'photo',
+  'camera.rotate.fill': 'flip-camera-ios',
+  'exclamationmark.triangle.fill': 'warning',
+  'checkmark.circle.fill': 'check-circle',
+  'speaker.wave.2.fill': 'volume-up',
+  'chevron.left': 'chevron-left',
 } as IconMapping;
 
 export function IconSymbol({
