@@ -1,48 +1,21 @@
-import { useLocalSearchParams, router } from 'expo-router';
-import { StyleSheet, View, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as Speech from 'expo-speech';
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function ResultScreen() {
   const params = useLocalSearchParams();
   const colorScheme = useColorScheme();
   
   const containsBHT = params.containsBHT === 'true';
-  const confidence = params.confidence as 'high' | 'medium' | 'low' | undefined;
   const matches = params.matches ? JSON.parse(params.matches as string) : [];
   const imageUri = params.imageUri as string;
   const detectedText = params.detectedText as string;
-
-  const getConfidenceText = () => {
-    switch (confidence) {
-      case 'high':
-        return 'Alta';
-      case 'medium':
-        return 'Média';
-      case 'low':
-        return 'Baixa';
-      default:
-        return 'Desconhecida';
-    }
-  };
-
-  const getConfidenceColor = () => {
-    switch (confidence) {
-      case 'high':
-        return '#4CAF50';
-      case 'medium':
-        return '#FF9800';
-      case 'low':
-        return '#F44336';
-      default:
-        return '#9E9E9E';
-    }
-  };
 
   const speakResult = () => {
     const message = containsBHT
@@ -104,22 +77,6 @@ export default function ResultScreen() {
               ? 'Este produto contém Butylated Hydroxytoluene (BHT) na lista de ingredientes.'
               : 'Não foi detectado BHT na lista de ingredientes deste produto.'}
           </ThemedText>
-
-          {confidence && (
-            <View style={styles.confidenceContainer}>
-              <ThemedText style={styles.confidenceLabel}>Confiança:</ThemedText>
-              <View
-                style={[
-                  styles.confidenceBadge,
-                  { backgroundColor: getConfidenceColor() },
-                ]}
-              >
-                <ThemedText style={styles.confidenceText}>
-                  {getConfidenceText()}
-                </ThemedText>
-              </View>
-            </View>
-          )}
 
           {matches.length > 0 && (
             <View style={styles.matchesContainer}>
@@ -227,25 +184,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
     lineHeight: 22,
-  },
-  confidenceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 8,
-  },
-  confidenceLabel: {
-    fontSize: 14,
-  },
-  confidenceBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  confidenceText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
   },
   matchesContainer: {
     width: '100%',

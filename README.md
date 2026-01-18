@@ -1,33 +1,22 @@
 # BHT Detector - Aplicativo Mobile
 
-**Criado por Costanza Pasquotto Assef**
-
-Aplicativo mobile desenvolvido por **Costanza Pasquotto Assef** para detectar BHT (Butylated Hydroxytoluene) em rótulos de alimentos através de análise de imagem usando inteligência artificial e OCR.
+Aplicativo mobile para detectar BHT (Butylated Hydroxytoluene) em rótulos de alimentos através de análise de imagem usando OCR e inteligência artificial.
 
 **Desenvolvedor:** Costanza Pasquotto Assef  
-**Tecnologias:** React Native, Expo, TypeScript, OCR, Machine Learning
-
-## ⚠️ Copyright
-
-**Copyright © 2025 Costanza Pasquotto Assef**
-
-**Criado por:** Costanza Pasquotto Assef
-
-Todos os direitos reservados.
-
-Este software é propriedade privada e confidencial. É proibida a cópia, modificação, distribuição ou uso comercial sem autorização expressa por escrito.
+**Tecnologias:** React Native, Expo, TypeScript, OCR
 
 ## 🚀 Funcionalidades
 
 - 📷 **Captura de imagem**: Use a câmera ou galeria para fotografar rótulos de alimentos
 - 🔍 **Detecção de BHT**: Analisa o texto do rótulo e identifica a presença de BHT
-- 📊 **Resultados detalhados**: Mostra confiança da detecção e termos encontrados
+- 📊 **Resultados detalhados**: Mostra termos encontrados e imagem escaneada
 - 🔊 **Feedback de voz**: Opção de ouvir o resultado
 - 🌓 **Tema claro/escuro**: Suporte automático a temas
+- 💬 **Entrada manual**: Possibilidade de inserir texto manualmente se o OCR falhar
 
 ## 📋 Pré-requisitos
 
-- Node.js 18+ 
+- Node.js 18+
 - npm ou yarn
 - Expo CLI
 - Dispositivo móvel ou emulador para testar
@@ -51,43 +40,40 @@ npx expo start
 
 ## ⚙️ Configuração do OCR
 
-**IMPORTANTE**: O app atualmente usa um texto de exemplo para demonstração. Para usar em produção, você precisa configurar um serviço de OCR.
+O app utiliza OCR automático com fallback para entrada manual:
 
-### Opção 1: Google Cloud Vision API
+- **Web**: Usa Tesseract.js automaticamente
+- **Mobile**: Tenta API OCR.space (requer API key própria para produção)
+
+### Configurar API de OCR (Opcional)
+
+#### Google Cloud Vision API
 
 1. Crie um projeto no [Google Cloud Console](https://console.cloud.google.com/)
 2. Ative a API Vision
 3. Crie uma chave de API
-4. Atualize `app/(tabs)/scan.tsx`:
+4. Use a função `performOCRWithGoogleVision` em `utils/ocr.ts`
 
-```typescript
-import { performOCRWithGoogleVision } from '@/utils/ocr';
+#### OCR.space API
 
-const ocrResult = await performOCRWithGoogleVision(imageUri, 'SUA_CHAVE_API');
-const text = ocrResult.text;
-```
-
-### Opção 2: Outras APIs de OCR
-
-Você pode integrar outras APIs de OCR modificando `utils/ocr.ts` ou criando sua própria implementação.
-
-### Opção 3: Bibliotecas Nativas
-
-Para melhor performance, considere usar bibliotecas nativas como:
-- ML Kit (requer custom dev client)
-- Tesseract OCR
-- Outras soluções de OCR offline
+1. Obtenha uma API key gratuita em [ocr.space](https://ocr.space/ocrapi/freekey)
+2. Atualize a constante `OCR_SPACE_API_KEY` em `utils/ocr.ts`
 
 ## 📱 Como Usar
 
 1. Abra o app e vá para a aba "Escanear"
 2. Tire uma foto do rótulo do alimento ou selecione uma da galeria
-3. O app analisará o texto e mostrará se contém BHT
-4. Veja os detalhes do resultado na tela de resultados
+3. O app analisará o texto automaticamente
+4. Se o OCR falhar, você pode inserir o texto manualmente
+5. Veja os detalhes do resultado na tela de resultados
 
-## 🧪 Teste
+## 🔍 Detecção de BHT
 
-Para testar sem OCR configurado, o app usa um texto de exemplo que contém BHT. Você pode modificar o texto em `app/(tabs)/scan.tsx` para testar diferentes cenários.
+O app detecta BHT através de vários padrões:
+- Sigla: `BHT`, `B.H.T.`, `B-H-T`
+- Nome completo: `Butylated Hydroxytoluene`
+- Código E: `E320`
+- Nome químico: `3,5-di-tert-butyl-4-hydroxytoluene`
 
 ## 📦 Estrutura do Projeto
 
@@ -107,46 +93,20 @@ utils/
 components/            # Componentes reutilizáveis
 ```
 
-## 🔍 Detecção de BHT
-
-O app detecta BHT através de vários padrões:
-- Sigla: `BHT`, `B.H.T.`, `B-H-T`
-- Nome completo: `Butylated Hydroxytoluene`
-- Código E: `E320`
-- Nome químico: `3,5-di-tert-butyl-4-hydroxytoluene`
-
 ## 📝 Notas
 
 - O app funciona melhor com rótulos bem iluminados e em foco
 - A precisão depende da qualidade do OCR
 - Alguns rótulos podem ter texto em áreas difíceis de ler
-
-## 👨‍💻 Sobre o Desenvolvedor
-
-**Costanza Pasquotto Assef** é o criador e desenvolvedor deste aplicativo. 
-
-Este projeto demonstra habilidades em:
-- Desenvolvimento Mobile (React Native, Expo)
-- TypeScript
-- Integração com APIs (OCR, Vision)
-- UI/UX Design
-- Processamento de Imagem
-- Machine Learning aplicado
+- No mobile, o OCR automático pode não estar disponível - use a entrada manual como alternativa
 
 ## 🔗 Links
 
+- **Website:** https://bhtdetector.com.br
 - **GitHub:** [Costanza22/BHT-Detector](https://github.com/Costanza22/BHT-Detector)
-- **Desenvolvedor:** Costanza Pasquotto Assef
-
 
 ## 📄 Licença
 
-Este projeto é privado e protegido por direitos autorais.
+Copyright © 2025 Costanza Pasquotto Assef. Todos os direitos reservados.
 
-**Copyright © 2025 Costanza Pasquotto Assef**
-
-**Criado por:** Costanza Pasquotto Assef
-
-Todos os direitos reservados.
-
-Para informações sobre licenciamento, entre em contato com o proprietário.
+Este software é propriedade privada. É proibida a cópia, modificação, distribuição ou uso comercial sem autorização expressa por escrito.

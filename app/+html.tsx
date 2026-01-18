@@ -23,7 +23,9 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="twitter:title" content="BHT Detector - Costanza Pasquotto Assef" />
         <meta name="twitter:description" content="Aplicativo desenvolvido por Costanza Pasquotto Assef para detectar BHT em alimentos." />
         
-        <link rel="canonical" href="https://bht-detector.vercel.app" />
+        <link rel="canonical" href="https://bhtdetector.com.br" />
+        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
         
         <ScrollViewStyleReset />
         {children}

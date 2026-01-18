@@ -1,15 +1,8 @@
-/**
- * Copyright (c) 2025 Costanza Pasquotto Assef
- * All Rights Reserved
- * 
- * Criado por: Costanza Pasquotto Assef
- */
-
-import { useState, useRef } from 'react';
-import { StyleSheet, View, TouchableOpacity, Alert, ActivityIndicator, Modal, TextInput, Platform } from 'react-native';
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { router } from 'expo-router';
+import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useRef, useState } from 'react';
+import { ActivityIndicator, Alert, Modal, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -17,7 +10,100 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { detectBHT } from '@/utils/bht-detector';
+import { performOCR } from '@/utils/ocr';
 import * as Haptics from 'expo-haptics';
+
+const IMAGE_QUALITY = 0.8;
+const MAX_TEXT_LENGTH = 500;
+const EXAMPLE_TEXT_WITH_BHT = 'INGREDIENTES: Farinha de trigo, açúcar, gordura vegetal, BHT (antioxidante), sal, fermento químico.';
+const EXAMPLE_TEXT_WITHOUT_BHT = 'INGREDIENTES: Farinha de arroz, água, azeite de oliva extra virgem, sal marinho, fermento biológico.';
+
+function resetScreenState(
+  setIsProcessing: (value: boolean) => void,
+  setShowTextModal: (value: boolean) => void,
+  setManualText: (value: string) => void,
+  setPendingImageUri: (value: string | null) => void
+) {
+  setIsProcessing(false);
+  setShowTextModal(false);
+  setManualText('');
+  setPendingImageUri(null);
+}
+
+function createFileInputForWeb(onFileSelected: (base64: string) => void, onError: () => void) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.style.display = 'none';
+  
+  input.onchange = async (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    
+    if (!file) {
+      onError();
+      input.remove();
+      return;
+    }
+    
+    try {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        onFileSelected(base64);
+        input.remove();
+      };
+      reader.onerror = () => {
+        Alert.alert('Erro', 'Não foi possível ler a imagem selecionada.');
+        onError();
+        input.remove();
+      };
+      reader.readAsDataURL(file);
+    } catch {
+      Alert.alert('Erro', 'Não foi possível processar a imagem.');
+      onError();
+      input.remove();
+    }
+  };
+  
+  document.body.appendChild(input);
+  input.click();
+}
+
+function createOCRErrorAlertOptions(
+  error: string,
+  imageUri: string,
+  onManualInput: () => void,
+  onUseExample: () => void,
+  onCancel: () => void
+) {
+  return {
+    title: 'OCR não disponível',
+    message: `${error}\n\nEscolha uma opção:`,
+    buttons: [
+      { text: 'Inserir texto manualmente', onPress: onManualInput },
+      { text: 'Usar exemplo (sem BHT)', onPress: onUseExample, style: 'default' as const },
+      { text: 'Cancelar', onPress: onCancel, style: 'cancel' as const },
+    ],
+    cancelable: true,
+  };
+}
+
+function createNoTextDetectedAlertOptions(
+  imageUri: string,
+  onManualInput: () => void,
+  onCancel: () => void
+) {
+  return {
+    title: 'Nenhum texto detectado',
+    message: 'Não foi possível detectar texto na imagem.\n\nEscolha uma opção:',
+    buttons: [
+      { text: 'Inserir texto manualmente', onPress: onManualInput },
+      { text: 'Cancelar', onPress: onCancel, style: 'cancel' as const },
+    ],
+    cancelable: true,
+  };
+}
 
 export default function ScanScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -28,6 +114,12 @@ export default function ScanScreen() {
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
   const cameraRef = useRef<CameraView>(null);
   const colorScheme = useColorScheme();
+
+  useFocusEffect(
+    useCallback(() => {
+      resetScreenState(setIsProcessing, setShowTextModal, setManualText, setPendingImageUri);
+    }, [])
+  );
 
   if (!permission) {
     return (
@@ -50,7 +142,7 @@ export default function ScanScreen() {
     );
   }
 
-  const takePicture = async () => {
+  const handleTakePicture = async () => {
     if (!cameraRef.current || isProcessing) return;
 
     try {
@@ -58,7 +150,7 @@ export default function ScanScreen() {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
       const photo = await cameraRef.current.takePictureAsync({
-        quality: 0.8,
+        quality: IMAGE_QUALITY,
         base64: false,
       });
 
@@ -72,33 +164,47 @@ export default function ScanScreen() {
     }
   };
 
-  const pickImage = async () => {
+  const handlePickImageFromWeb = () => {
+    createFileInputForWeb(
+      (base64) => processImage(base64),
+      () => setIsProcessing(false)
+    );
+  };
+
+  const handlePickImageFromMobile = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert('Permissão necessária', 'Precisamos da permissão para acessar suas fotos.');
+      setIsProcessing(false);
+      return;
+    }
+
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: IMAGE_QUALITY,
+    });
+
+    if (!result.canceled && result.assets[0]?.uri) {
+      await processImage(result.assets[0].uri);
+    } else {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePickImage = async () => {
     if (isProcessing) return;
 
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
-      if (status !== 'granted') {
-        Alert.alert(
-          'Permissão necessária',
-          'Precisamos da permissão para acessar suas fotos.'
-        );
-        return;
-      }
-
       setIsProcessing(true);
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets[0]?.uri) {
-        await processImage(result.assets[0].uri);
+      
+      if (Platform.OS === 'web') {
+        handlePickImageFromWeb();
       } else {
-        setIsProcessing(false);
+        await handlePickImageFromMobile();
       }
     } catch (error) {
       console.error('Erro ao selecionar imagem:', error);
@@ -107,41 +213,93 @@ export default function ScanScreen() {
     }
   };
 
-  const processImage = async (imageUri: string) => {
-    try {
-      Alert.alert(
-        'OCR não configurado',
-        'O reconhecimento de texto ainda não está configurado.\n\n' +
-        'Escolha uma opção:',
-        [
-          {
-            text: 'Inserir texto manualmente',
-            onPress: () => showTextInputDialog(imageUri),
-          },
-          {
-            text: 'Usar exemplo (sem BHT)',
-            onPress: () => processWithExampleText(imageUri, false),
-            style: 'default',
-          },
-          {
-            text: 'Cancelar',
-            onPress: () => setIsProcessing(false),
-            style: 'cancel',
-          },
-        ],
-        { cancelable: true }
-      );
-    } catch (error) {
-      console.error('Erro ao processar imagem:', error);
-      Alert.alert('Erro', 'Não foi possível processar a imagem.');
-      setIsProcessing(false);
-    }
-  };
-
   const showTextInputDialog = (imageUri: string) => {
     setPendingImageUri(imageUri);
     setManualText('');
     setShowTextModal(true);
+  };
+
+  const handleProcessWithExample = (imageUri: string, hasBHT: boolean) => {
+    const exampleText = hasBHT ? EXAMPLE_TEXT_WITH_BHT : EXAMPLE_TEXT_WITHOUT_BHT;
+    processText(exampleText, imageUri);
+  };
+
+  const navigateToResult = (detectionResult: ReturnType<typeof detectBHT>, imageUri: string, text: string) => {
+    resetScreenState(setIsProcessing, setShowTextModal, setManualText, setPendingImageUri);
+
+    router.push({
+      pathname: '/result',
+      params: {
+        containsBHT: detectionResult.containsBHT.toString(),
+        confidence: detectionResult.confidence,
+        matches: JSON.stringify(detectionResult.matches),
+        imageUri,
+        detectedText: text.substring(0, MAX_TEXT_LENGTH),
+      },
+    });
+  };
+
+  const processText = (text: string, imageUri: string) => {
+    try {
+      const detectionResult = detectBHT(text);
+      navigateToResult(detectionResult, imageUri, text);
+    } catch (error) {
+      console.error('Erro ao processar texto:', error);
+      Alert.alert('Erro', 'Não foi possível analisar o texto.');
+      setIsProcessing(false);
+    }
+  };
+
+  const handleOCRSuccess = (text: string, imageUri: string) => {
+    console.log('Texto extraído pelo OCR:', text.substring(0, 100) + '...');
+    processText(text, imageUri);
+  };
+
+  const handleOCRError = (error: string, imageUri: string) => {
+    const alertOptions = createOCRErrorAlertOptions(
+      error,
+      imageUri,
+      () => showTextInputDialog(imageUri),
+      () => {
+        setIsProcessing(false);
+        handleProcessWithExample(imageUri, false);
+      },
+      () => setIsProcessing(false)
+    );
+    Alert.alert(alertOptions.title, alertOptions.message, alertOptions.buttons, { cancelable: true });
+  };
+
+  const handleNoTextDetected = (imageUri: string) => {
+    const alertOptions = createNoTextDetectedAlertOptions(
+      imageUri,
+      () => showTextInputDialog(imageUri),
+      () => setIsProcessing(false)
+    );
+    Alert.alert(alertOptions.title, alertOptions.message, alertOptions.buttons, { cancelable: true });
+  };
+
+  const processImage = async (imageUri: string) => {
+    try {
+      const ocrResult = await performOCR(imageUri);
+      
+      if (ocrResult.error) {
+        handleOCRError(ocrResult.error, imageUri);
+      } else if (ocrResult.text?.trim()) {
+        handleOCRSuccess(ocrResult.text, imageUri);
+      } else {
+        handleNoTextDetected(imageUri);
+      }
+    } catch (error) {
+      console.error('Erro ao processar imagem:', error);
+      Alert.alert(
+        'Erro ao processar imagem',
+        'Não foi possível processar a imagem. Tente novamente ou insira o texto manualmente.',
+        [
+          { text: 'Inserir texto manualmente', onPress: () => showTextInputDialog(imageUri) },
+          { text: 'Cancelar', onPress: () => setIsProcessing(false), style: 'cancel' },
+        ]
+      );
+    }
   };
 
   const handleManualTextSubmit = () => {
@@ -156,47 +314,18 @@ export default function ScanScreen() {
     }
   };
 
-  const processWithExampleText = (imageUri: string, hasBHT: boolean) => {
-    const exampleText = hasBHT
-      ? `INGREDIENTES: Farinha de trigo, açúcar, gordura vegetal, BHT (antioxidante), sal, fermento químico.`
-      : `INGREDIENTES: Farinha de arroz, água, azeite de oliva extra virgem, sal marinho, fermento biológico.`;
-    
-    processText(exampleText, imageUri);
-  };
-
-  const processText = (text: string, imageUri: string) => {
-    try {
-      const detectionResult = detectBHT(text);
-
-      router.push({
-        pathname: '/result',
-        params: {
-          containsBHT: detectionResult.containsBHT.toString(),
-          confidence: detectionResult.confidence,
-          matches: JSON.stringify(detectionResult.matches),
-          imageUri: imageUri,
-          detectedText: text.substring(0, 500),
-        },
-      });
-    } catch (error) {
-      console.error('Erro ao processar texto:', error);
-      Alert.alert('Erro', 'Não foi possível analisar o texto.');
-      setIsProcessing(false);
-    }
-  };
-
   const toggleCameraFacing = () => {
     setFacing((current) => (current === 'back' ? 'front' : 'back'));
   };
 
+  const handleModalClose = () => {
+    setShowTextModal(false);
+    setIsProcessing(false);
+  };
+
   return (
     <ThemedView style={styles.container}>
-      <CameraView
-        ref={cameraRef}
-        style={styles.camera}
-        facing={facing}
-        mode="picture"
-      >
+      <CameraView ref={cameraRef} style={styles.camera} facing={facing} mode="picture">
         <View style={styles.overlay}>
           <View style={styles.header}>
             <ThemedText type="title" style={styles.title}>
@@ -214,7 +343,7 @@ export default function ScanScreen() {
           <View style={styles.controls}>
             <TouchableOpacity
               style={[styles.controlButton, isProcessing && styles.controlButtonDisabled]}
-              onPress={pickImage}
+              onPress={handlePickImage}
               disabled={isProcessing}
             >
               <IconSymbol
@@ -226,7 +355,7 @@ export default function ScanScreen() {
 
             <TouchableOpacity
               style={[styles.captureButton, isProcessing && styles.captureButtonDisabled]}
-              onPress={takePicture}
+              onPress={handleTakePicture}
               disabled={isProcessing}
             >
               {isProcessing ? (
@@ -255,10 +384,7 @@ export default function ScanScreen() {
         visible={showTextModal}
         transparent
         animationType="slide"
-        onRequestClose={() => {
-          setShowTextModal(false);
-          setIsProcessing(false);
-        }}
+        onRequestClose={handleModalClose}
       >
         <ThemedView style={styles.modalOverlay}>
           <ThemedView style={styles.modalContent}>
@@ -289,10 +415,7 @@ export default function ScanScreen() {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalButtonCancel]}
-                onPress={() => {
-                  setShowTextModal(false);
-                  setIsProcessing(false);
-                }}
+                onPress={handleModalClose}
               >
                 <ThemedText style={styles.modalButtonTextCancel}>Cancelar</ThemedText>
               </TouchableOpacity>
@@ -467,4 +590,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
