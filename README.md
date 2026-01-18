@@ -106,9 +106,6 @@ O app detecta BHT através de vários padrões:
 - A precisão depende da qualidade do OCR
 - Alguns rótulos podem ter texto em áreas difíceis de ler
 
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
 
 ## 📄 Licença
 
