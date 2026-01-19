@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useEffect, useState, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView, View, Platform, TextInput, Alert, Animated } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, Animated, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -192,21 +192,21 @@ export default function HistoryScreen() {
         ]}
       >
         <ThemedView style={[styles.statCard, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
-          <ThemedText type="subtitle" style={styles.statNumber}>
+          <ThemedText type="subtitle" style={styles.statNumber} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
             {stats.total}
           </ThemedText>
           <ThemedText style={styles.statLabel}>Total de Scans</ThemedText>
         </ThemedView>
 
         <ThemedView style={[styles.statCard, { backgroundColor: '#F4433620' }]}>
-          <ThemedText type="subtitle" style={[styles.statNumber, { color: '#F44336' }]}>
+          <ThemedText type="subtitle" style={[styles.statNumber, { color: '#F44336' }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
             {stats.withBHT}
           </ThemedText>
           <ThemedText style={styles.statLabel}>Com BHT</ThemedText>
         </ThemedView>
 
         <ThemedView style={[styles.statCard, { backgroundColor: '#4CAF5020' }]}>
-          <ThemedText type="subtitle" style={[styles.statNumber, { color: '#4CAF50' }]}>
+          <ThemedText type="subtitle" style={[styles.statNumber, { color: '#4CAF50' }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
             {stats.withoutBHT}
           </ThemedText>
           <ThemedText style={styles.statLabel}>Sem BHT</ThemedText>
@@ -492,14 +492,19 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    padding: 16,
+    padding: 12,
     borderRadius: 12,
     alignItems: 'center',
+    minHeight: 90,
+    justifyContent: 'center',
+    overflow: 'visible',
   },
   statNumber: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4,
+    textAlign: 'center',
+    includeFontPadding: false,
   },
   statLabel: {
     fontSize: 12,
