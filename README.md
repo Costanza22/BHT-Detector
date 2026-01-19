@@ -16,7 +16,7 @@ Aplicativo mobile para detectar BHT (Butylated Hydroxytoluene) em rótulos de al
 
 ## 📋 Pré-requisitos
 
-- Node.js 18+
+- Node.js 18+ 
 - npm ou yarn
 - Expo CLI
 - Dispositivo móvel ou emulador para testar
