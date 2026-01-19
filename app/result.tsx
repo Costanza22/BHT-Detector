@@ -33,9 +33,9 @@ export default function ResultScreen() {
       useNativeDriver: true,
     }).start();
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
       try {
-        const history = JSON.parse(localStorage.getItem('bht-scans-history') || '[]');
+        const history = JSON.parse(window.localStorage.getItem('bht-scans-history') || '[]');
         const newEntry = {
           containsBHT,
           timestamp: new Date().toISOString(),
@@ -43,7 +43,7 @@ export default function ResultScreen() {
           imageUri: imageUri || null,
         };
         const updatedHistory = [newEntry, ...history].slice(0, 50);
-        localStorage.setItem('bht-scans-history', JSON.stringify(updatedHistory));
+        window.localStorage.setItem('bht-scans-history', JSON.stringify(updatedHistory));
       } catch (error) {
         if (__DEV__) {
           console.error('Erro ao salvar histórico:', error);
