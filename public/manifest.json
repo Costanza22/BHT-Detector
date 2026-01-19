@@ -1,0 +1,43 @@
+{
+  "name": "BHT Detector - Costanza Pasquotto Assef",
+  "short_name": "BHT Detector",
+  "description": "Aplicativo desenvolvido por Costanza Pasquotto Assef para detectar BHT em rótulos de alimentos. Use a câmera para escanear e descobrir se o produto contém Butylated Hydroxytoluene.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0a7ea4",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/assets/images/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/images/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "food", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Escanear Rótulo",
+      "short_name": "Escanear",
+      "description": "Abrir diretamente a tela de escaneamento",
+      "url": "/scan",
+      "icons": [
+        {
+          "src": "/assets/images/favicon.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
+
