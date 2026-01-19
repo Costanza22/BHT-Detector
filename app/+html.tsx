@@ -8,14 +8,15 @@ export default function Root({ children }: PropsWithChildren) {
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="google-site-verification" content="0l9phNowmklk5xSA8l_rtd_W7dWOxO_pPGkCfyTCO4M" />
         
-        <meta name="description" content="BHT Detector - Aplicativo desenvolvido por Costanza Pasquotto Assef para detectar BHT (Butylated Hydroxytoluene) em rótulos de alimentos usando câmera e OCR." />
-        <meta name="keywords" content="BHT Detector, Costanza Pasquotto Assef, detector BHT, Butylated Hydroxytoluene, app alimentos, OCR rótulos, análise ingredientes, app mobile, React Native, Expo" />
+        <meta name="description" content="BHT Detector - Detecte BHT (Butylated Hydroxytoluene) em rótulos de alimentos. Use sua câmera para escanear ingredientes e descubra se o produto contém BHT. Aplicativo gratuito e fácil de usar." />
+        <meta name="keywords" content="BHT Detector, detector BHT, Butylated Hydroxytoluene, BHT em alimentos, escanear rótulos, detectar BHT, app BHT, verificar ingredientes, BHT detector online, app alimentos saudáveis, OCR rótulos, análise ingredientes" />
         <meta name="author" content="Costanza Pasquotto Assef" />
         <meta name="copyright" content="Copyright (c) 2025 Costanza Pasquotto Assef" />
         
-        <meta property="og:title" content="BHT Detector - Criado por Costanza Pasquotto Assef" />
-        <meta property="og:description" content="Aplicativo mobile desenvolvido por Costanza Pasquotto Assef para detectar BHT em rótulos de alimentos." />
+        <meta property="og:title" content="BHT Detector - Detecte BHT em Rótulos de Alimentos" />
+        <meta property="og:description" content="Use sua câmera para escanear rótulos e descobrir se o produto contém BHT (Butylated Hydroxytoluene). Aplicativo gratuito e fácil de usar." />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="BHT Detector" />
         
