@@ -1,7 +1,7 @@
-import { Image } from 'expo-image';
-import { StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
-import { openBrowserAsync, WebBrowserPresentationStyle } from 'expo-web-browser';
 import * as Haptics from 'expo-haptics';
+import { Image } from 'expo-image';
+import { openBrowserAsync, WebBrowserPresentationStyle } from 'expo-web-browser';
+import { Linking, Platform, StyleSheet, TouchableOpacity } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -20,8 +20,8 @@ export default function TabTwoScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       
       if (Platform.OS === 'web') {
-        if (typeof window !== 'undefined' && window.open) {
-          window.open(url, '_blank');
+        if (globalThis.window?.open) {
+          globalThis.window.open(url, '_blank');
         } else {
           await Linking.openURL(url);
         }
@@ -207,6 +207,20 @@ export default function TabTwoScreen() {
           <ThemedText style={styles.articleButtonText}>Ler Artigo sobre o App</ThemedText>
         </TouchableOpacity>
 
+        <TouchableOpacity 
+          style={[styles.articleButton, styles.presentationButton]}
+          onPress={() => handleOpenLink('https://www.canva.com/design/DAG-rm-mUZE/Xhx_AiMd-SMdICp1JXEj0A/view?utm_content=DAG-rm-mUZE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton')}
+          accessibilityLabel="Ler apresentação sobre o BHT Detector"
+          accessibilityRole="button"
+        >
+          <IconSymbol
+            name="slides.fill"
+            size={22}
+            color="#fff"
+          />
+          <ThemedText style={styles.articleButtonText}>Ler Apresentação</ThemedText>
+        </TouchableOpacity>
+
         <ThemedView style={styles.linksContainer}>
           <TouchableOpacity 
             style={[styles.linkButton, styles.linkButtonPrimary]}
@@ -284,8 +298,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 10,
     marginTop: 8,
-    marginBottom: 20,
+    marginBottom: 12,
     backgroundColor: '#0a7ea4',
+  },
+  presentationButton: {
+    backgroundColor: '#6c5ce7',
+    marginBottom: 20,
   },
   articleButtonText: {
     color: '#fff',

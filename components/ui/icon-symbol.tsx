@@ -26,6 +26,7 @@ const MAPPING: Record<string, MaterialIconName> = {
   'moon.fill': 'dark-mode',
   'sun.fill': 'light-mode',
   'chart.bar.fill': 'bar-chart',
+  'slides.fill': 'slideshow',
 };
 
 type IconSymbolName = keyof typeof MAPPING;
