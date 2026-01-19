@@ -21,11 +21,20 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.costanza.bhtdetector",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "NSCameraUsageDescription": "O app precisa de acesso à câmera para escanear rótulos de alimentos.",
+        "NSPhotoLibraryUsageDescription": "O app precisa de acesso às suas fotos para analisar rótulos de alimentos."
+      }
     },
     "android": {
       "package": "com.costanza.bhtdetector",
       "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -49,7 +58,14 @@
       "orientation": "portrait",
       "backgroundColor": "#ffffff",
       "bundler": "metro",
-      "preventAutoOpenAsync": false
+      "preventAutoOpenAsync": false,
+      "build": {
+        "babel": {
+          "include": [
+            "@expo/metro-runtime"
+          ]
+        }
+      }
     },
     "plugins": [
       "expo-router",

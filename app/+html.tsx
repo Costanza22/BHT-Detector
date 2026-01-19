@@ -38,14 +38,41 @@ export default function Root({ children }: PropsWithChildren) {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
           }
+          html {
+            font-size: 16px !important;
+            -webkit-text-size-adjust: 100% !important;
+            -moz-text-size-adjust: 100% !important;
+            text-size-adjust: 100% !important;
+          }
           body {
-            font-size: 16px;
+            font-size: 16px !important;
             line-height: 1.5;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
           }
           @media (max-width: 768px) {
-            body {
-              font-size: 16px;
+            html {
+              font-size: 16px !important;
             }
+            body {
+              font-size: 16px !important;
+            }
+          }
+          div, p, span, a, button, input, textarea, label {
+            font-size: inherit;
+          }
+          [class*="r-146c3p1"], [class*="css-146c3p1"] {
+            font-size: 18px !important;
+            line-height: 26px !important;
+          }
+          [class*="r-1jxf684"], [class*="css-1jxf684"] {
+            font-size: 36px !important;
+            line-height: 40px !important;
+            font-weight: bold !important;
+          }
+          [class*="r-1awa8pu"], [class*="css-1awa8pu"] {
+            font-size: 22px !important;
+            line-height: 28px !important;
+            font-weight: bold !important;
           }
         `}</style>
         
@@ -73,4 +100,5 @@ export default function Root({ children }: PropsWithChildren) {
     </html>
   );
 }
+
 
