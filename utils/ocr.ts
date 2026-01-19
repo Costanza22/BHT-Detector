@@ -50,11 +50,11 @@ async function recognizeWithTesseract(imageUri: string): Promise<OCRResult | nul
     const { createWorker } = await import('tesseract.js');
     
     const worker = await createWorker('por+eng', 1, {
-      logger: (m) => {
-        if (m.status === 'recognizing text') {
-          console.log(`OCR Progress: ${Math.round(m.progress * 100)}%`);
-        }
-      },
+          logger: (m) => {
+            if (m.status === 'recognizing text' && __DEV__) {
+              console.log(`OCR Progress: ${Math.round(m.progress * 100)}%`);
+            }
+          },
     });
 
     try {

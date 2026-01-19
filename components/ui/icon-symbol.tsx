@@ -19,6 +19,15 @@ const MAPPING = {
   'checkmark.circle.fill': 'check-circle',
   'speaker.wave.2.fill': 'volume-up',
   'chevron.left': 'chevron-left',
+  'person.fill': 'person',
+  'link': 'link',
+  'globe': 'language',
+  'code.fill': 'code',
+  'book.fill': 'menu-book',
+  'square.and.arrow.up': 'share',
+  'moon.fill': 'dark-mode',
+  'sun.fill': 'light-mode',
+  'xmark.circle.fill': 'cancel',
 } as IconMapping;
 
 export function IconSymbol({

@@ -251,7 +251,9 @@ export default function ScanScreen() {
   };
 
   const handleOCRSuccess = (text: string, imageUri: string) => {
-    console.log('Texto extraído pelo OCR:', text.substring(0, 100) + '...');
+    if (__DEV__) {
+      console.log('Texto extraído pelo OCR:', text.substring(0, 100) + '...');
+    }
     processText(text, imageUri);
   };
 
@@ -315,7 +317,22 @@ export default function ScanScreen() {
   };
 
   const toggleCameraFacing = () => {
-    setFacing((current) => (current === 'back' ? 'front' : 'back'));
+    if (isProcessing) return;
+    
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setFacing((current) => {
+        const newFacing = current === 'back' ? 'front' : 'back';
+        if (__DEV__) {
+          console.log('Alternando câmera de', current, 'para', newFacing);
+        }
+        return newFacing;
+      });
+    } catch (error) {
+      if (__DEV__) {
+        console.error('Erro ao alternar câmera:', error);
+      }
+    }
   };
 
   const handleModalClose = () => {
@@ -325,8 +342,26 @@ export default function ScanScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <CameraView ref={cameraRef} style={styles.camera} facing={facing} mode="picture">
+      <CameraView 
+        ref={cameraRef} 
+        style={styles.camera} 
+        facing={facing} 
+        mode="picture"
+        key={facing}
+      >
         <View style={styles.overlay}>
+          {isProcessing && (
+            <View style={styles.processingOverlay}>
+              <ActivityIndicator size="large" color="#fff" />
+              <ThemedText style={styles.processingText}>
+                Processando imagem...
+              </ThemedText>
+              <ThemedText style={styles.processingSubtext}>
+                Analisando texto do rótulo
+              </ThemedText>
+            </View>
+          )}
+          
           <View style={styles.header}>
             <View style={styles.headerIconContainer}>
               <IconSymbol
@@ -352,6 +387,9 @@ export default function ScanScreen() {
               style={[styles.controlButton, isProcessing && styles.controlButtonDisabled]}
               onPress={handlePickImage}
               disabled={isProcessing}
+              accessibilityLabel="Selecionar imagem da galeria"
+              accessibilityRole="button"
+              accessibilityHint="Abre a galeria para selecionar uma foto do rótulo"
             >
               <IconSymbol
                 name="photo.fill"
@@ -364,6 +402,9 @@ export default function ScanScreen() {
               style={[styles.captureButton, isProcessing && styles.captureButtonDisabled]}
               onPress={handleTakePicture}
               disabled={isProcessing}
+              accessibilityLabel="Tirar foto do rótulo"
+              accessibilityRole="button"
+              accessibilityHint="Captura uma foto do rótulo para análise"
             >
               {isProcessing ? (
                 <ActivityIndicator color="#fff" />
@@ -376,6 +417,9 @@ export default function ScanScreen() {
               style={[styles.controlButton, isProcessing && styles.controlButtonDisabled]}
               onPress={toggleCameraFacing}
               disabled={isProcessing}
+              accessibilityLabel="Alternar entre câmera frontal e traseira"
+              accessibilityRole="button"
+              accessibilityHint="Muda a câmera entre frente e trás"
             >
               <IconSymbol
                 name="camera.rotate.fill"
@@ -423,6 +467,8 @@ export default function ScanScreen() {
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalButtonCancel]}
                 onPress={handleModalClose}
+                accessibilityLabel="Cancelar inserção de texto"
+                accessibilityRole="button"
               >
                 <ThemedText style={styles.modalButtonTextCancel}>Cancelar</ThemedText>
               </TouchableOpacity>
@@ -430,6 +476,9 @@ export default function ScanScreen() {
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalButtonSubmit]}
                 onPress={handleManualTextSubmit}
+                accessibilityLabel="Analisar texto inserido"
+                accessibilityRole="button"
+                accessibilityHint="Analisa o texto do rótulo para detectar BHT"
               >
                 <ThemedText style={styles.modalButtonTextSubmit}>Analisar</ThemedText>
               </TouchableOpacity>

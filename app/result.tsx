@@ -6,16 +6,51 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Speech from 'expo-speech';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View, Share, Platform, Alert, Animated } from 'react-native';
+
+interface ShareData {
+  title?: string;
+  text?: string;
+  url?: string;
+  files?: File[];
+}
+import { useEffect, useRef } from 'react';
 
 export default function ResultScreen() {
   const params = useLocalSearchParams();
   const colorScheme = useColorScheme();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   
   const containsBHT = params.containsBHT === 'true';
   const matches = params.matches ? JSON.parse(params.matches as string) : [];
   const imageUri = params.imageUri as string;
   const detectedText = params.detectedText as string;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+
+    if (typeof window !== 'undefined') {
+      try {
+        const history = JSON.parse(localStorage.getItem('bht-scans-history') || '[]');
+        const newEntry = {
+          containsBHT,
+          timestamp: new Date().toISOString(),
+          matches: matches.slice(0, 5),
+          imageUri: imageUri || null,
+        };
+        const updatedHistory = [newEntry, ...history].slice(0, 50);
+        localStorage.setItem('bht-scans-history', JSON.stringify(updatedHistory));
+      } catch (error) {
+        if (__DEV__) {
+          console.error('Erro ao salvar histórico:', error);
+        }
+      }
+    }
+  }, []);
 
   const speakResult = () => {
     const message = containsBHT
@@ -37,11 +72,76 @@ export default function ResultScreen() {
     router.push('/(tabs)/scan');
   };
 
+  const handleShare = async () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      
+      const resultMessage = containsBHT
+        ? '⚠️ Atenção! Este produto contém BHT (Butylated Hydroxytoluene).\n\nDetectado usando o BHT Detector - https://bhtdetector.com.br'
+        : '✅ Este produto não contém BHT.\n\nVerificado usando o BHT Detector - https://bhtdetector.com.br';
+      
+      if (Platform.OS === 'web') {
+        if (navigator.share) {
+          const shareData: ShareData = {
+            title: 'Resultado da Análise BHT',
+            text: resultMessage,
+            url: imageUri || 'https://bhtdetector.com.br',
+          };
+          
+          if (imageUri && navigator.canShare) {
+            try {
+              const response = await fetch(imageUri);
+              const blob = await response.blob();
+              const file = new File([blob], 'bht-result.jpg', { type: 'image/jpeg' });
+              
+              if (navigator.canShare({ files: [file] })) {
+                shareData.files = [file];
+              }
+            } catch (fileError) {
+              if (__DEV__) {
+                console.log('Não foi possível incluir imagem no compartilhamento:', fileError);
+              }
+            }
+          }
+          
+          await navigator.share(shareData);
+        } else {
+          await navigator.clipboard.writeText(resultMessage);
+          Alert.alert('Copiado!', 'Resultado copiado para a área de transferência.');
+        }
+      } else {
+        const shareOptions: Share.ShareOptions = {
+          message: resultMessage,
+          title: 'Resultado da Análise BHT',
+        };
+        
+        if (imageUri) {
+          shareOptions.url = imageUri;
+        }
+        
+        const result = await Share.share(shareOptions);
+        
+        if (result.action === Share.sharedAction && __DEV__) {
+          console.log('Conteúdo compartilhado com sucesso');
+        }
+      }
+    } catch (error) {
+      if (__DEV__) {
+        console.error('Erro ao compartilhar:', error);
+      }
+    }
+  };
+
   return (
     <ThemedView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <TouchableOpacity 
+            onPress={handleBack} 
+            style={styles.backButton}
+            accessibilityLabel="Voltar para tela anterior"
+            accessibilityRole="button"
+          >
             <IconSymbol
               name="chevron.left"
               size={24}
@@ -54,10 +154,11 @@ export default function ResultScreen() {
           <View style={styles.placeholder} />
         </View>
 
-        <ThemedView
+        <Animated.View
           style={[
             styles.resultCard,
             containsBHT ? styles.resultCardWarning : styles.resultCardSuccess,
+            { opacity: fadeAnim },
           ]}
         >
           <View style={styles.iconContainer}>
@@ -88,7 +189,7 @@ export default function ResultScreen() {
               ))}
             </View>
           )}
-        </ThemedView>
+        </Animated.View>
 
         {imageUri && (
           <ThemedView style={styles.imageContainer}>
@@ -106,20 +207,41 @@ export default function ResultScreen() {
 
         <View style={styles.actions}>
           <TouchableOpacity
+            style={[styles.actionButton, styles.shareButton]}
+            onPress={handleShare}
+            accessibilityLabel="Compartilhar resultado"
+            accessibilityRole="button"
+            accessibilityHint="Compartilha o resultado da análise"
+          >
+            <IconSymbol
+              name="square.and.arrow.up"
+              size={20}
+              color="#fff"
+            />
+            <ThemedText style={styles.actionButtonText}>Compartilhar</ThemedText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={[styles.actionButton, styles.speakButton]}
             onPress={speakResult}
+            accessibilityLabel="Ouvir resultado da análise"
+            accessibilityRole="button"
+            accessibilityHint="Reproduz o resultado da análise em áudio"
           >
             <IconSymbol
               name="speaker.wave.2.fill"
               size={20}
               color="#fff"
             />
-            <ThemedText style={styles.actionButtonText}>Ouvir Resultado</ThemedText>
+            <ThemedText style={styles.actionButtonText}>Ouvir</ThemedText>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.actionButton, styles.scanButton]}
             onPress={handleNewScan}
+            accessibilityLabel="Fazer nova análise"
+            accessibilityRole="button"
+            accessibilityHint="Abre a câmera para escanear outro rótulo"
           >
             <IconSymbol
               name="camera.fill"
@@ -249,6 +371,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 12,
     gap: 8,
+  },
+  shareButton: {
+    backgroundColor: '#FF9800',
   },
   speakButton: {
     backgroundColor: '#0a7ea4',
