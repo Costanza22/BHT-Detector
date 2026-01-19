@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView, View, Platform } from 'react-native';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
+import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -29,11 +29,29 @@ export default function HistoryScreen() {
   });
 
   useEffect(() => {
-    loadHistory();
+    try {
+      loadHistory();
+    } catch (error) {
+      if (__DEV__) {
+        console.error('Erro ao carregar histórico no useEffect:', error);
+      }
+    }
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      try {
+        loadHistory();
+      } catch (error) {
+        if (__DEV__) {
+          console.error('Erro ao carregar histórico no useFocusEffect:', error);
+        }
+      }
+    }, [])
+  );
+
   const loadHistory = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && window.localStorage) {
       try {
         const savedHistory = JSON.parse(localStorage.getItem('bht-scans-history') || '[]');
         setHistory(savedHistory);
@@ -53,11 +71,13 @@ export default function HistoryScreen() {
   };
 
   const clearHistory = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.removeItem('bht-scans-history');
       setHistory([]);
       setStats({ total: 0, withBHT: 0, withoutBHT: 0, percentage: 0 });
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      if (Platform.OS !== 'web') {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+      }
     }
   };
 
@@ -168,7 +188,9 @@ export default function HistoryScreen() {
           <TouchableOpacity
             style={styles.scanButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              if (Platform.OS !== 'web') {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+              }
               router.push('/(tabs)/scan');
             }}
             accessibilityLabel="Ir para tela de escanear"
@@ -186,7 +208,7 @@ export default function HistoryScreen() {
         <ScrollView style={styles.historyList}>
           {history.map((entry, index) => (
             <ThemedView
-              key={index}
+              key={`${entry.timestamp}-${index}`}
               style={[
                 styles.historyItem,
                 entry.containsBHT ? styles.historyItemWarning : styles.historyItemSuccess,
