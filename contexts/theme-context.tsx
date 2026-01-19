@@ -11,28 +11,20 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-function isLocalStorageAvailable(): boolean {
-  try {
-    return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-  } catch {
-    return false;
-  }
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemTheme = useRNColorScheme();
   const [theme, setThemeState] = useState<Theme>('auto');
 
   useEffect(() => {
-    if (isLocalStorageAvailable()) {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       try {
-        const savedTheme = window.localStorage.getItem('bht-theme') as Theme | null;
+        const savedTheme = localStorage.getItem('bht-theme') as Theme | null;
         if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
           setThemeState(savedTheme);
         }
       } catch (error) {
         if (__DEV__) {
-          console.error('Erro ao ler tema salvo:', error);
+          console.log('Erro ao ler tema do localStorage:', error);
         }
       }
     }
@@ -44,12 +36,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    if (isLocalStorageAvailable()) {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       try {
-        window.localStorage.setItem('bht-theme', newTheme);
+        localStorage.setItem('bht-theme', newTheme);
       } catch (error) {
         if (__DEV__) {
-          console.error('Erro ao salvar tema:', error);
+          console.log('Erro ao salvar tema no localStorage:', error);
         }
       }
     }

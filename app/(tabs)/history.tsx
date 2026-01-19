@@ -48,9 +48,9 @@ export default function HistoryScreen() {
   }, [history, filter, searchQuery]);
 
   const loadHistory = () => {
-    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+    if (typeof window !== 'undefined') {
       try {
-        const savedHistory = JSON.parse(window.localStorage.getItem('bht-scans-history') || '[]');
+        const savedHistory = JSON.parse(localStorage.getItem('bht-scans-history') || '[]');
         setHistory(savedHistory);
         
         const total = savedHistory.length;
@@ -68,8 +68,8 @@ export default function HistoryScreen() {
   };
 
   const clearHistory = () => {
-    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
-      window.localStorage.removeItem('bht-scans-history');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('bht-scans-history');
       setHistory([]);
       setStats({ total: 0, withBHT: 0, withoutBHT: 0, percentage: 0 });
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -129,9 +129,13 @@ export default function HistoryScreen() {
         exportText += '\n';
       });
 
-      if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(exportText);
-        Alert.alert('Copiado!', 'Histórico copiado para a área de transferência.');
+      if (Platform.OS === 'web') {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(exportText);
+          Alert.alert('Copiado!', 'Histórico copiado para a área de transferência.');
+        } else {
+          Alert.alert('Erro', 'Não foi possível copiar o histórico.');
+        }
       } else {
         const { Share } = await import('react-native');
         await Share.share({
