@@ -223,7 +223,7 @@ export default function TabTwoScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={[styles.linkButton, styles.linkButtonPrimary]}
+            style={[styles.linkButton, styles.linkButtonSecondary, { borderColor: Colors[colorScheme ?? 'light'].tint }]}
             onPress={() => handleOpenLink('https://github.com/Costanza22')}
             accessibilityLabel="Abrir perfil no GitHub"
             accessibilityRole="button"
@@ -231,9 +231,11 @@ export default function TabTwoScreen() {
             <IconSymbol
               name="code.fill"
               size={20}
-              color="#fff"
+              color={Colors[colorScheme ?? 'light'].tint}
             />
-            <ThemedText style={styles.linkButtonText}>GitHub</ThemedText>
+            <ThemedText style={[styles.linkButtonTextSecondary, { color: Colors[colorScheme ?? 'light'].tint }]}>
+              GitHub
+            </ThemedText>
           </TouchableOpacity>
         </ThemedView>
       </ThemedView>
