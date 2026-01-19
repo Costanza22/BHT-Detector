@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
-import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity, ScrollView, View, Platform } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -32,14 +32,8 @@ export default function HistoryScreen() {
     loadHistory();
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadHistory();
-    }, [])
-  );
-
   const loadHistory = () => {
-    if (typeof globalThis.window !== 'undefined') {
+    if (typeof window !== 'undefined') {
       try {
         const savedHistory = JSON.parse(localStorage.getItem('bht-scans-history') || '[]');
         setHistory(savedHistory);
@@ -59,7 +53,7 @@ export default function HistoryScreen() {
   };
 
   const clearHistory = () => {
-    if (typeof globalThis.window !== 'undefined') {
+    if (typeof window !== 'undefined') {
       localStorage.removeItem('bht-scans-history');
       setHistory([]);
       setStats({ total: 0, withBHT: 0, withoutBHT: 0, percentage: 0 });
@@ -192,7 +186,7 @@ export default function HistoryScreen() {
         <ScrollView style={styles.historyList}>
           {history.map((entry, index) => (
             <ThemedView
-              key={`${entry.timestamp}-${index}`}
+              key={index}
               style={[
                 styles.historyItem,
                 entry.containsBHT ? styles.historyItemWarning : styles.historyItemSuccess,
