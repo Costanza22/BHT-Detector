@@ -485,16 +485,22 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
+    minHeight: 100,
+    justifyContent: 'center',
   },
   statNumber: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 4,
+    textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   statLabel: {
     fontSize: 12,
     opacity: 0.7,
     textAlign: 'center',
+    flexWrap: 'wrap',
   },
   percentageContainer: {
     marginBottom: 24,
