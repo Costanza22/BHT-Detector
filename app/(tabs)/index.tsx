@@ -62,6 +62,11 @@ export default function HomeScreen() {
           O BHT (Butylated Hydroxytoluene) é um antioxidante sintético usado como conservante
           em alimentos. Algumas pessoas preferem evitar produtos que contenham este aditivo.
         </ThemedText>
+        <ThemedText style={{ marginTop: 12 }}>
+          Use nosso detector de BHT gratuito para verificar rapidamente se seus alimentos contêm
+          este conservante. Basta escanear o rótulo com sua câmera e descobrir instantaneamente
+          se o produto contém BHT na lista de ingredientes.
+        </ThemedText>
       </ThemedView>
     </ParallaxScrollView>
   );
