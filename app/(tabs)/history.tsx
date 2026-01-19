@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import { StyleSheet, TouchableOpacity, ScrollView, View, Platform, TextInput, Alert, Animated } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -48,7 +48,7 @@ export default function HistoryScreen() {
   }, [history, filter, searchQuery]);
 
   const loadHistory = () => {
-    if (typeof globalThis.window !== 'undefined' && typeof localStorage !== 'undefined') {
+    if (typeof window !== 'undefined') {
       try {
         const savedHistory = JSON.parse(localStorage.getItem('bht-scans-history') || '[]');
         setHistory(savedHistory);
@@ -68,17 +68,11 @@ export default function HistoryScreen() {
   };
 
   const clearHistory = () => {
-    if (typeof globalThis.window !== 'undefined' && typeof localStorage !== 'undefined') {
-      try {
-        localStorage.removeItem('bht-scans-history');
-        setHistory([]);
-        setStats({ total: 0, withBHT: 0, withoutBHT: 0, percentage: 0 });
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      } catch (error) {
-        if (__DEV__) {
-          console.error('Erro ao limpar histórico:', error);
-        }
-      }
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('bht-scans-history');
+      setHistory([]);
+      setStats({ total: 0, withBHT: 0, withoutBHT: 0, percentage: 0 });
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
   };
 
@@ -192,21 +186,21 @@ export default function HistoryScreen() {
         ]}
       >
         <ThemedView style={[styles.statCard, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
-          <ThemedText type="subtitle" style={styles.statNumber} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+          <ThemedText type="subtitle" style={styles.statNumber}>
             {stats.total}
           </ThemedText>
           <ThemedText style={styles.statLabel}>Total de Scans</ThemedText>
         </ThemedView>
 
         <ThemedView style={[styles.statCard, { backgroundColor: '#F4433620' }]}>
-          <ThemedText type="subtitle" style={[styles.statNumber, { color: '#F44336' }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+          <ThemedText type="subtitle" style={[styles.statNumber, { color: '#F44336' }]}>
             {stats.withBHT}
           </ThemedText>
           <ThemedText style={styles.statLabel}>Com BHT</ThemedText>
         </ThemedView>
 
         <ThemedView style={[styles.statCard, { backgroundColor: '#4CAF5020' }]}>
-          <ThemedText type="subtitle" style={[styles.statNumber, { color: '#4CAF50' }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+          <ThemedText type="subtitle" style={[styles.statNumber, { color: '#4CAF50' }]}>
             {stats.withoutBHT}
           </ThemedText>
           <ThemedText style={styles.statLabel}>Sem BHT</ThemedText>
@@ -492,19 +486,14 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    padding: 12,
+    padding: 16,
     borderRadius: 12,
     alignItems: 'center',
-    minHeight: 90,
-    justifyContent: 'center',
-    overflow: 'visible',
   },
   statNumber: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 4,
-    textAlign: 'center',
-    includeFontPadding: false,
   },
   statLabel: {
     fontSize: 12,

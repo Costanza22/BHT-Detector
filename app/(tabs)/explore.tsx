@@ -2,7 +2,6 @@ import { Image } from 'expo-image';
 import { StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
 import { openBrowserAsync, WebBrowserPresentationStyle } from 'expo-web-browser';
 import * as Haptics from 'expo-haptics';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -224,17 +223,19 @@ export default function TabTwoScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={[styles.linkButton, styles.linkButtonPrimary]}
+            style={[styles.linkButton, styles.linkButtonSecondary, { borderColor: Colors[colorScheme ?? 'light'].tint }]}
             onPress={() => handleOpenLink('https://github.com/Costanza22')}
             accessibilityLabel="Abrir perfil no GitHub"
             accessibilityRole="button"
           >
-            <MaterialIcons
-              name="code"
-              size={24}
-              color="#ffffff"
+            <IconSymbol
+              name="code.fill"
+              size={20}
+              color={Colors[colorScheme ?? 'light'].tint}
             />
-            <ThemedText style={styles.linkButtonText}>GitHub</ThemedText>
+            <ThemedText style={[styles.linkButtonTextSecondary, { color: Colors[colorScheme ?? 'light'].tint }]}>
+              GitHub
+            </ThemedText>
           </TouchableOpacity>
         </ThemedView>
       </ThemedView>

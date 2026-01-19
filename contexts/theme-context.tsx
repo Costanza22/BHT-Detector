@@ -16,16 +16,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('auto');
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      try {
-        const savedTheme = localStorage.getItem('bht-theme') as Theme | null;
-        if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
-          setThemeState(savedTheme);
-        }
-      } catch (error) {
-        if (__DEV__) {
-          console.log('Erro ao ler tema do localStorage:', error);
-        }
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('bht-theme') as Theme | null;
+      if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
+        setThemeState(savedTheme);
       }
     }
   }, []);
@@ -36,14 +30,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      try {
-        localStorage.setItem('bht-theme', newTheme);
-      } catch (error) {
-        if (__DEV__) {
-          console.log('Erro ao salvar tema no localStorage:', error);
-        }
-      }
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bht-theme', newTheme);
     }
   };
 

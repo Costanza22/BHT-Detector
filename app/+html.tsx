@@ -26,12 +26,7 @@ export default function Root({ children }: PropsWithChildren) {
         
         <link rel="canonical" href="https://bhtdetector.com.br" />
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="BHT Detector" />
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
         
         <style>{`
           * {
@@ -51,23 +46,6 @@ export default function Root({ children }: PropsWithChildren) {
         
         <ScrollViewStyleReset />
         {children}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                      console.log('Service Worker registrado:', registration.scope);
-                    })
-                    .catch(function(error) {
-                      console.log('Erro ao registrar Service Worker:', error);
-                    });
-                });
-              }
-            `,
-          }}
-        />
       </head>
       <body>{children}</body>
     </html>

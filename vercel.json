@@ -6,43 +6,7 @@
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,
-  "headers": [
-    {
-      "source": "/sw.js",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/javascript"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        }
-      ]
-    },
-    {
-      "source": "/manifest.json",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/manifest+json"
-        }
-      ]
-    }
-  ],
   "rewrites": [
-    {
-      "source": "/_expo/static/(.*)",
-      "destination": "/_expo/static/$1"
-    },
-    {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
-    },
-    {
-      "source": "/(favicon\\.ico|manifest\\.json|robots\\.txt|sitemap\\.xml|sw\\.js)",
-      "destination": "/$1"
-    },
     {
       "source": "/(.*)",
       "destination": "/index.html"

@@ -33,7 +33,7 @@ export default function ResultScreen() {
       useNativeDriver: true,
     }).start();
 
-    if (typeof globalThis.window !== 'undefined' && typeof localStorage !== 'undefined') {
+    if (typeof window !== 'undefined') {
       try {
         const history = JSON.parse(localStorage.getItem('bht-scans-history') || '[]');
         const newEntry = {

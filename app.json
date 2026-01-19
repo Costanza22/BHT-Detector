@@ -47,9 +47,7 @@
       "startUrl": "/",
       "display": "standalone",
       "orientation": "portrait",
-      "backgroundColor": "#ffffff",
-      "bundler": "metro",
-      "preventAutoOpenAsync": false
+      "backgroundColor": "#ffffff"
     },
     "plugins": [
       "expo-router",
