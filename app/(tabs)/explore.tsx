@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
 import { openBrowserAsync, WebBrowserPresentationStyle } from 'expo-web-browser';
 import * as Haptics from 'expo-haptics';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -228,8 +229,8 @@ export default function TabTwoScreen() {
             accessibilityLabel="Abrir perfil no GitHub"
             accessibilityRole="button"
           >
-            <IconSymbol
-              name="code.fill"
+            <MaterialIcons
+              name="code"
               size={24}
               color="#ffffff"
             />
