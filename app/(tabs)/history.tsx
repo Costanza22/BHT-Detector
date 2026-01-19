@@ -48,7 +48,7 @@ export default function HistoryScreen() {
   }, [history, filter, searchQuery]);
 
   const loadHistory = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof globalThis.window !== 'undefined' && typeof localStorage !== 'undefined') {
       try {
         const savedHistory = JSON.parse(localStorage.getItem('bht-scans-history') || '[]');
         setHistory(savedHistory);
@@ -68,11 +68,17 @@ export default function HistoryScreen() {
   };
 
   const clearHistory = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('bht-scans-history');
-      setHistory([]);
-      setStats({ total: 0, withBHT: 0, withoutBHT: 0, percentage: 0 });
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (typeof globalThis.window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.removeItem('bht-scans-history');
+        setHistory([]);
+        setStats({ total: 0, withBHT: 0, withoutBHT: 0, percentage: 0 });
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      } catch (error) {
+        if (__DEV__) {
+          console.error('Erro ao limpar histórico:', error);
+        }
+      }
     }
   };
 
