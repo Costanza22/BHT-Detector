@@ -61,22 +61,18 @@ export default function Root({ children }: PropsWithChildren) {
             font-size: inherit;
           }
           [class*="r-146c3p1"], [class*="css-146c3p1"] {
-            font-size: 20px !important;
-            line-height: 28px !important;
+            font-size: 18px !important;
+            line-height: 26px !important;
           }
           [class*="r-1jxf684"], [class*="css-1jxf684"] {
-            font-size: 40px !important;
-            line-height: 44px !important;
+            font-size: 36px !important;
+            line-height: 40px !important;
             font-weight: bold !important;
           }
           [class*="r-1awa8pu"], [class*="css-1awa8pu"] {
-            font-size: 24px !important;
-            line-height: 30px !important;
-            font-weight: bold !important;
-          }
-          [class*="r-1jkafct"] {
-            font-size: 20px !important;
+            font-size: 22px !important;
             line-height: 28px !important;
+            font-weight: bold !important;
           }
         `}</style>
         
