@@ -4,3 +4,4 @@ Preferred-Languages: pt-BR, en
 Canonical: https://bhtdetector.com.br/.well-known/security.txt
 
 
+
