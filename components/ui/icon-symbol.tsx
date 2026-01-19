@@ -27,7 +27,6 @@ const MAPPING = {
   'square.and.arrow.up': 'share',
   'moon.fill': 'dark-mode',
   'sun.fill': 'light-mode',
-  'xmark.circle.fill': 'cancel',
 } as IconMapping;
 
 export function IconSymbol({

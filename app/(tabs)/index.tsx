@@ -1,7 +1,6 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useEffect, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, Share, Platform, Alert, Animated } from 'react-native';
+import { StyleSheet, TouchableOpacity, Share, Platform, Alert } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -16,24 +15,6 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const themeContext = useTheme();
   const { theme, setTheme, actualTheme } = themeContext || { theme: 'auto', setTheme: () => {}, actualTheme: 'light' };
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.95)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 50,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
 
   const handleScan = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -104,15 +85,7 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
 
-      <Animated.View
-        style={[
-          styles.stepContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }],
-          },
-        ]}
-      >
+      <ThemedView style={styles.stepContainer}>
         <TouchableOpacity
           style={styles.scanButton}
           onPress={handleScan}
@@ -127,7 +100,7 @@ export default function HomeScreen() {
           />
           <ThemedText style={styles.scanButtonText}>Escanear Rótulo</ThemedText>
         </TouchableOpacity>
-      </Animated.View>
+      </ThemedView>
 
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Sobre o BHT</ThemedText>

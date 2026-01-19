@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useEffect, useState, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView, View, Platform, TextInput, Alert, Animated } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity, ScrollView, View, Platform } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -18,34 +18,19 @@ interface HistoryEntry {
   imageUri?: string | null;
 }
 
-type FilterType = 'all' | 'withBHT' | 'withoutBHT';
-
 export default function HistoryScreen() {
   const colorScheme = useColorScheme();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const [filteredHistory, setFilteredHistory] = useState<HistoryEntry[]>([]);
-  const [filter, setFilter] = useState<FilterType>('all');
-  const [searchQuery, setSearchQuery] = useState('');
   const [stats, setStats] = useState({
     total: 0,
     withBHT: 0,
     withoutBHT: 0,
     percentage: 0,
   });
-  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     loadHistory();
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
   }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [history, filter, searchQuery]);
 
   const loadHistory = () => {
     if (typeof window !== 'undefined') {
@@ -76,28 +61,6 @@ export default function HistoryScreen() {
     }
   };
 
-  const applyFilters = () => {
-    let filtered = [...history];
-
-    if (filter === 'withBHT') {
-      filtered = filtered.filter((entry) => entry.containsBHT);
-    } else if (filter === 'withoutBHT') {
-      filtered = filtered.filter((entry) => !entry.containsBHT);
-    }
-
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter((entry) => {
-        const matchesText = entry.matches.some((match) =>
-          match.toLowerCase().includes(query)
-        );
-        return matchesText;
-      });
-    }
-
-    setFilteredHistory(filtered);
-  };
-
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString('pt-BR', {
@@ -107,48 +70,6 @@ export default function HistoryScreen() {
       hour: '2-digit',
       minute: '2-digit',
     });
-  };
-
-  const exportHistory = async () => {
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      
-      let exportText = '📊 Histórico de Scans BHT Detector\n';
-      exportText += `Total: ${stats.total} scans\n`;
-      exportText += `Com BHT: ${stats.withBHT}\n`;
-      exportText += `Sem BHT: ${stats.withoutBHT}\n`;
-      exportText += `Percentual com BHT: ${stats.percentage}%\n\n`;
-      exportText += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
-
-      history.forEach((entry, index) => {
-        exportText += `${index + 1}. ${entry.containsBHT ? '🚨 BHT Detectado' : '✅ Sem BHT'}\n`;
-        exportText += `   Data: ${formatDate(entry.timestamp)}\n`;
-        if (entry.matches.length > 0) {
-          exportText += `   Termos: ${entry.matches.join(', ')}\n`;
-        }
-        exportText += '\n';
-      });
-
-      if (Platform.OS === 'web') {
-        if (navigator.clipboard) {
-          await navigator.clipboard.writeText(exportText);
-          Alert.alert('Copiado!', 'Histórico copiado para a área de transferência.');
-        } else {
-          Alert.alert('Erro', 'Não foi possível copiar o histórico.');
-        }
-      } else {
-        const { Share } = await import('react-native');
-        await Share.share({
-          message: exportText,
-          title: 'Histórico BHT Detector',
-        });
-      }
-    } catch (error) {
-      if (__DEV__) {
-        console.error('Erro ao exportar histórico:', error);
-      }
-      Alert.alert('Erro', 'Não foi possível exportar o histórico.');
-    }
   };
 
   const backgroundImageUrl = 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?q=80&w=960&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
@@ -173,18 +94,7 @@ export default function HistoryScreen() {
         <ThemedText type="title">Estatísticas</ThemedText>
       </ThemedView>
 
-      <Animated.View
-        style={[
-          styles.statsContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: fadeAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [20, 0],
-            }) }],
-          },
-        ]}
-      >
+      <ThemedView style={styles.statsContainer}>
         <ThemedView style={[styles.statCard, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}>
           <ThemedText type="subtitle" style={styles.statNumber}>
             {stats.total}
@@ -205,7 +115,7 @@ export default function HistoryScreen() {
           </ThemedText>
           <ThemedText style={styles.statLabel}>Sem BHT</ThemedText>
         </ThemedView>
-      </Animated.View>
+      </ThemedView>
 
       {stats.total > 0 && (
         <ThemedView style={styles.percentageContainer}>
@@ -229,139 +139,18 @@ export default function HistoryScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="subtitle">Histórico</ThemedText>
         {history.length > 0 && (
-          <View style={styles.headerActions}>
-            <TouchableOpacity
-              onPress={exportHistory}
-              style={styles.exportButton}
-              accessibilityLabel="Exportar histórico"
-              accessibilityRole="button"
-            >
-              <IconSymbol
-                name="square.and.arrow.up"
-                size={18}
-                color="#0a7ea4"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={clearHistory}
-              style={styles.clearButton}
-              accessibilityLabel="Limpar histórico"
-              accessibilityRole="button"
-            >
-              <ThemedText style={styles.clearButtonText}>
-                Limpar
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={clearHistory}
+            style={styles.clearButton}
+            accessibilityLabel="Limpar histórico"
+            accessibilityRole="button"
+          >
+            <ThemedText style={styles.clearButtonText}>
+              Limpar
+            </ThemedText>
+          </TouchableOpacity>
         )}
       </ThemedView>
-
-      {history.length > 0 && (
-        <>
-          <ThemedView style={styles.searchContainer}>
-            <IconSymbol
-              name="info.circle.fill"
-              size={20}
-              color={Colors[colorScheme ?? 'light'].tabIconDefault}
-            />
-            <TextInput
-              style={[
-                styles.searchInput,
-                {
-                  color: Colors[colorScheme ?? 'light'].text,
-                  backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                }
-              ]}
-              placeholder="Buscar por termos..."
-              placeholderTextColor={Colors[colorScheme ?? 'light'].tabIconDefault}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              accessibilityLabel="Campo de busca no histórico"
-              accessibilityHint="Digite para buscar por termos encontrados nos scans"
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity
-                onPress={() => setSearchQuery('')}
-                style={styles.clearSearchButton}
-                accessibilityLabel="Limpar busca"
-                accessibilityRole="button"
-              >
-                <IconSymbol
-                  name="xmark.circle.fill"
-                  size={20}
-                  color={Colors[colorScheme ?? 'light'].tabIconDefault}
-                />
-              </TouchableOpacity>
-            )}
-          </ThemedView>
-
-          <View style={styles.filterContainer}>
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                filter === 'all' && styles.filterButtonActive,
-              ]}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setFilter('all');
-              }}
-              accessibilityLabel="Filtrar todos"
-              accessibilityRole="button"
-            >
-              <ThemedText
-                style={[
-                  styles.filterButtonText,
-                  filter === 'all' && styles.filterButtonTextActive,
-                ]}
-              >
-                Todos
-              </ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                filter === 'withBHT' && styles.filterButtonActive,
-              ]}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setFilter('withBHT');
-              }}
-              accessibilityLabel="Filtrar apenas com BHT"
-              accessibilityRole="button"
-            >
-              <ThemedText
-                style={[
-                  styles.filterButtonText,
-                  filter === 'withBHT' && styles.filterButtonTextActive,
-                ]}
-              >
-                Com BHT
-              </ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.filterButton,
-                filter === 'withoutBHT' && styles.filterButtonActive,
-              ]}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setFilter('withoutBHT');
-              }}
-              accessibilityLabel="Filtrar apenas sem BHT"
-              accessibilityRole="button"
-            >
-              <ThemedText
-                style={[
-                  styles.filterButtonText,
-                  filter === 'withoutBHT' && styles.filterButtonTextActive,
-                ]}
-              >
-                Sem BHT
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
 
       {history.length === 0 ? (
         <ThemedView style={styles.emptyContainer}>
@@ -394,43 +183,15 @@ export default function HistoryScreen() {
           </TouchableOpacity>
         </ThemedView>
       ) : (
-        <>
-          {filteredHistory.length === 0 && (searchQuery || filter !== 'all') ? (
-            <ThemedView style={styles.emptyContainer}>
-              <IconSymbol
-                name="info.circle.fill"
-                size={48}
-                color={Colors[colorScheme ?? 'light'].tabIconDefault}
-              />
-              <ThemedText style={styles.emptyText}>
-                Nenhum resultado encontrado
-              </ThemedText>
-              <ThemedText style={styles.emptySubtext}>
-                {searchQuery ? 'Tente buscar com outros termos' : 'Tente outro filtro'}
-              </ThemedText>
-            </ThemedView>
-          ) : (
-            <Animated.View style={{ opacity: fadeAnim }}>
-              <ScrollView style={styles.historyList}>
-                {filteredHistory.map((entry, index) => (
-                  <Animated.View
-                    key={index}
-                    style={{
-                      opacity: fadeAnim,
-                      transform: [{
-                        translateX: fadeAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [-20, 0],
-                        }),
-                      }],
-                    }}
-                  >
-                    <ThemedView
-                      style={[
-                        styles.historyItem,
-                        entry.containsBHT ? styles.historyItemWarning : styles.historyItemSuccess,
-                      ]}
-                    >
+        <ScrollView style={styles.historyList}>
+          {history.map((entry, index) => (
+            <ThemedView
+              key={index}
+              style={[
+                styles.historyItem,
+                entry.containsBHT ? styles.historyItemWarning : styles.historyItemSuccess,
+              ]}
+            >
               <View style={styles.historyItemHeader}>
                 <IconSymbol
                   name={entry.containsBHT ? 'exclamationmark.triangle.fill' : 'checkmark.circle.fill'}
@@ -457,12 +218,8 @@ export default function HistoryScreen() {
                 />
               )}
             </ThemedView>
-                  </Animated.View>
-                ))}
-              </ScrollView>
-            </Animated.View>
-          )}
-        </>
+          ))}
+        </ScrollView>
       )}
     </ParallaxScrollView>
   );
@@ -522,14 +279,6 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 4,
   },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  exportButton: {
-    padding: 8,
-  },
   clearButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -538,51 +287,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#0a7ea4',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 16,
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: 'transparent',
-  },
-  searchInput: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    fontSize: 16,
-  },
-  clearSearchButton: {
-    padding: 4,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 16,
-  },
-  filterButton: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.2)',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  filterButtonActive: {
-    backgroundColor: '#0a7ea4',
-    borderColor: '#0a7ea4',
-  },
-  filterButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  filterButtonTextActive: {
-    color: '#fff',
   },
   emptyContainer: {
     alignItems: 'center',
@@ -661,5 +365,4 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
-
 
