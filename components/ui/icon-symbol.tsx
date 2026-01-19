@@ -22,7 +22,7 @@ const MAPPING = {
   'person.fill': 'person',
   'link': 'link',
   'globe': 'language',
-  'code.fill': 'terminal',
+  'code.fill': 'code',
   'book.fill': 'menu-book',
   'square.and.arrow.up': 'share',
   'moon.fill': 'dark-mode',

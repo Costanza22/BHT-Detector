@@ -230,8 +230,8 @@ export default function TabTwoScreen() {
           >
             <IconSymbol
               name="code.fill"
-              size={22}
-              color="#fff"
+              size={24}
+              color="#ffffff"
             />
             <ThemedText style={styles.linkButtonText}>GitHub</ThemedText>
           </TouchableOpacity>
